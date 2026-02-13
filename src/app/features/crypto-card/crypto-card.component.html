@@ -1,0 +1,81 @@
+<div 
+  class="crypto-card" 
+  [class.alert-active]="alertActive">
+  
+  <div class="card-header">
+    <div class="asset-info">
+      <span class="rank">#{{ asset.rank }}</span>
+      <h3>{{ asset.symbol }}</h3>
+      <span class="asset-name">{{ asset.name }}</span>
+    </div>
+    <div class="price-container">
+      <div class="current-price" [ngClass]="priceChangeClass">
+        ${{ asset.price.toLocaleString() }}
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-item">
+      <span class="label">Cambio 24h</span>
+      <span class="value" [ngClass]="priceChangeClass">
+        {{ asset.changePercent >= 0 ? '+' : '' }}{{ asset.changePercent }}%
+      </span>
+    </div>
+    <div class="stat-item">
+      <span class="label">SMA (20)</span>
+      <span class="value">${{ asset.sma.toLocaleString() }}</span>
+    </div>
+    <div class="stat-item">
+      <span class="label">Volatilidad</span>
+      <span class="value">${{ asset.volatility.toLocaleString() }}</span>
+    </div>
+    <div class="stat-item">
+      <span class="label">Volumen 24h</span>
+      <span class="value">${{ (asset.volume / 1000000).toFixed(0) }}M</span>
+    </div>
+  </div>
+
+  <div class="range24h">
+    <div class="low">
+      <span class="label">24h Bajo</span>
+      <span class="value">${{ asset.low24h.toLocaleString() }}</span>
+    </div>
+    <div class="high">
+      <span class="label">24h Alto</span>
+      <span class="value">${{ asset.high24h.toLocaleString() }}</span>
+    </div>
+  </div>
+
+  <div class="last-update">
+    Actualizado: {{ asset.lastUpdate | date:'HH:mm:ss' }}
+  </div>
+
+  <div class="alert-section">
+    <button 
+      class="alert-btn" 
+      [class.active]="alertActive"
+      (click)="toggleAlertInput()">
+      <span class="icon">🔔</span>
+      {{ alertThreshold ? 'Alerta Activa' : 'Configurar Alerta' }}
+    </button>
+
+    @if (showAlertInput) {
+      <div class="alert-input-container">
+        <input
+          type="number"
+          [(ngModel)]="thresholdValue"
+          [placeholder]="'Umbral ($' + (asset.price * 1.1).toFixed(2) + ')'"
+          class="alert-input">
+        <div class="alert-actions">
+          <button class="save-btn" (click)="onSetAlert()">
+            {{ alertThreshold ? 'Actualizar' : 'Guardar' }}
+          </button>
+          @if (alertThreshold) {
+            <button class="remove-btn" (click)="onRemoveAlert()">Eliminar</button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

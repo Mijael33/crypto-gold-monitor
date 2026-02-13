@@ -1,0 +1,203 @@
+<div class="crypto-dashboard">
+  <!-- HEADER LUXURY BLACK & GOLD -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <h1>
+        <span class="gradient-text">CryptoGold</span>
+        <span class="live-badge">LIVE</span>
+      </h1>
+      <p class="subtitle">Monitoreo en tiempo real de criptomonedas - Monitoreo de lujo</p>
+    </div>
+
+    <!-- STATS CARDS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+          <span class="stat-label">Precio Promedio</span>
+          <span class="stat-value">${{ averagePrice().toLocaleString(undefined, {maximumFractionDigits: 2}) }}</span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-info">
+          <span class="stat-label">Activos Monitoreados</span>
+          <span class="stat-value">{{ totalAssets() }}</span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">🔔</div>
+        <div class="stat-info">
+          <span class="stat-label">Alertas Configuradas</span>
+          <span class="stat-value">{{ alertsCount() }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-info">
+          <span class="stat-label">Mayor Ganador</span>
+          @if (topGainers().length > 0) {
+            <span class="stat-value positive">
+              {{ topGainers()[0].symbol }} +{{ topGainers()[0].changePercent }}%
+            </span>
+          } @else {
+            <span class="stat-value">-</span>
+          }
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- FEEDBACK DE ALERTAS -->
+  @if (alertCreatedMessage()) {
+    <div class="alert-feedback">
+      {{ alertCreatedMessage() }}
+    </div>
+  }
+
+  <!-- FILTROS Y CONTROLES -->
+  <div class="filters-section">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        [value]="searchTerm()"
+        (input)="updateSearchTerm($event)"
+        placeholder="Buscar por nombre o símbolo..."
+        class="search-input">
+    </div>
+
+    <div class="view-toggles">
+      <button 
+        class="view-btn" 
+        [class.active]="viewMode() === 'table'"
+        (click)="setViewMode('table')">
+        📋 Tabla
+      </button>
+      <button 
+        class="view-btn" 
+        [class.active]="viewMode() === 'grid'"
+        (click)="setViewMode('grid')">
+        🃏 Tarjetas
+      </button>
+    </div>
+
+    <div class="filter-buttons">
+      <button
+        class="filter-btn"
+        [class.active]="selectedFilter() === 'all'"
+        (click)="setFilter('all')">
+        Todos
+      </button>
+      <button
+        class="filter-btn"
+        [class.active]="selectedFilter() === 'gainers'"
+        (click)="setFilter('gainers')">
+        📈 Ganadores
+      </button>
+      <button
+        class="filter-btn"
+        [class.active]="selectedFilter() === 'losers'"
+        (click)="setFilter('losers')">
+        📉 Perdedores
+      </button>
+      <button
+        class="filter-btn alert-toggle"
+        [class.active]="showAlertsOnly()"
+        (click)="toggleAlertsOnly()">
+        🔔 Solo Alertas
+      </button>
+    </div>
+  </div>
+
+  <!-- VISTA DE TABLA (POR DEFECTO) -->
+  @if (viewMode() === 'table') {
+    <div class="table-container">
+      <table class="crypto-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Activo</th>
+            <th>Precio</th>
+            <th>Cambio 24h</th>
+            <th>Promedio Móvil (SMA)</th>
+            <th>Volatilidad</th>
+            <th>Última Actualización</th>
+            <th>Alerta</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (asset of filteredAssets(); track trackByAssetId(0, asset)) {
+            <tr 
+              class="crypto-row"
+              [class.alert-active]="isAlertActive(asset.id)">
+              <td class="rank">{{ asset.rank }}</td>
+              <td class="asset-cell">
+                <div class="asset-info">
+                  <strong>{{ asset.symbol }}</strong>
+                  <span class="asset-name">{{ asset.name }}</span>
+                </div>
+              </td>
+              <td class="price" [ngClass]="asset.changePercent >= 0 ? 'positive' : 'negative'">
+                ${{ asset.price.toLocaleString() }}
+              </td>
+              <td class="change" [ngClass]="asset.changePercent >= 0 ? 'positive' : 'negative'">
+                {{ asset.changePercent >= 0 ? '+' : '' }}{{ asset.changePercent }}%
+              </td>
+              <td class="sma">${{ asset.sma ? asset.sma.toLocaleString() : '0' }}</td>
+              <td class="volatility">${{ asset.volatility ? asset.volatility.toLocaleString() : '0' }}</td>
+              <td class="last-update">{{ asset.lastUpdate | date:'HH:mm:ss' }}</td>
+              <td class="alert-cell">
+                @if (getAlertThreshold(asset.id)) {
+                  <span class="alert-badge" [title]="'Umbral: $' + getAlertThreshold(asset.id)!">
+                    🔔 Activa
+                  </span>
+                } @else {
+                  <button class="table-alert-btn" (click)="onSetAlert({id: asset.id, threshold: Math.round(asset.price * 1.1)})">
+                    ⚡ Crear
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8" class="no-results-table">
+                <div class="no-results-content">
+                  <span class="emoji">🔍</span>
+                  <h3>No se encontraron resultados</h3>
+                  <p>Intenta con otros filtros</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- ✅ VISTA DE TARJETAS (NUEVA) -->
+  @if (viewMode() === 'grid') {
+    <div class="crypto-grid">
+      @for (asset of filteredAssets(); track trackByAssetId(0, asset)) {
+        <app-crypto-card
+          [asset]="asset"
+          [alertThreshold]="getAlertThreshold(asset.id)"
+          [isAlertActive]="isAlertActive(asset.id)"
+          (setAlert)="onSetAlert($event)"
+          (removeAlert)="onRemoveAlert($event)">
+        </app-crypto-card>
+      } @empty {
+        <div class="no-results">
+          <div class="no-results-content">
+            <span class="emoji">🔍</span>
+            <h3>No se encontraron resultados</h3>
+            <p>Intenta con otros términos de búsqueda</p>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

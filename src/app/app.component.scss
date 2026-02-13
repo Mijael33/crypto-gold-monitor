@@ -1,0 +1,152 @@
+main {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  padding-bottom: 180px;
+}
+
+/* FOOTER LUXURY BLACK & GOLD */
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(145deg, #0A0A0A, #1A1A1A);
+  border-top: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 2rem 2rem 1rem;
+  color: #F4E9D2;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+
+  .footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .footer-left, .footer-right {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .monitoring-info {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(244, 233, 210, 0.9);
+
+    .live-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: #D4AF37;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+      box-shadow: 0 0 10px #D4AF37;
+    }
+
+    strong {
+      color: #D4AF37;
+      font-weight: 700;
+    }
+  }
+
+  .course-info, .subject-info {
+    font-size: 0.9rem;
+    color: rgba(244, 233, 210, 0.8);
+    margin-bottom: 0.5rem;
+    
+    strong {
+      color: #D4AF37;
+      font-weight: 600;
+    }
+  }
+
+  .developer {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    
+    strong {
+      color: #D4AF37;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+  }
+
+  .ci {
+    font-size: 0.95rem;
+    color: rgba(244, 233, 210, 0.9);
+    margin-bottom: 0.5rem;
+    
+    strong {
+      color: #D4AF37;
+      font-family: monospace;
+      font-size: 1rem;
+    }
+  }
+
+  .university {
+    font-size: 0.85rem;
+    color: rgba(244, 233, 210, 0.7);
+    font-style: italic;
+    letter-spacing: 1px;
+    line-height: 1.4;
+  }
+
+  .footer-bottom {
+    max-width: 1400px;
+    margin: 2rem auto 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+    text-align: center;
+    
+    p {
+      color: rgba(244, 233, 210, 0.6);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 768px) {
+  main {
+    padding-bottom: 250px;
+  }
+
+  .footer {
+    padding: 1.5rem;
+
+    .footer-content {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .footer-left, .footer-right {
+      min-width: 100%;
+    }
+
+    .footer-bottom {
+      margin-top: 1rem;
+    }
+  }
+}
